@@ -13,27 +13,36 @@ const searchAuthor = document.querySelector(".search__author");
 const searchTitle = document.querySelector(".search__title");
 const searchInputAuthor = document.querySelector(".search__input");
 const showAllBtn = document.querySelector(".show-all");
+const statisticsBlock = document.querySelector(".statistics");
+const searchForm = document.querySelector(".search");
+const showFav = document.querySelector(".show-favourites");
 
 let allNotes = [];
 
 if (localStorage.getItem("allNotes")) {
   allNotes = JSON.parse(localStorage.getItem("allNotes"));
+  // sortByDate(allNotes);
   allNotes.forEach((note) => renderNote(note));
 }
 
 checkEmptyList();
+showStatistics();
 
 function renderNote(newNote) {
+  const cssClass = newNote.liked
+    ? "table__row table__row-favourite"
+    : "table__row";
+
   const markup = `
-     <tr id="${newNote.id}" class="table__row"> 
+     <tr id="${newNote.id}" class="${cssClass}"> 
               <td>${newNote.title}</td>
               <td>${newNote.author}</td>
               <td>${newNote.pages}</td>
-              <td>${newNote.date}</td>
+              <td>${formatDate(newNote.date)}</td>
               <td>${newNote.comment ? newNote.comment : ""}</td>
               <td class="table__buttons">
-                <button type="button" data-action="done" class="btn-action">
-                  <img src="./img/tick.svg" alt="Book" width="15" height="15" />
+                <button type="button" data-action="like" class="btn-action">
+                  <img src="./img/like.png" alt="like" width="17" height="17" />
                 </button>
                 <button type="button" data-action="delete" class="btn-action">
                   <img src="./img/delete-icon.svg" alt="Done" width="15" height="15" />
@@ -41,7 +50,7 @@ function renderNote(newNote) {
               </td>
             </tr>
     `;
-
+  // ВСТАВЛЯТЬ ЭЛЕМЕНТ В ОПРЕДЕЛЕННОЕ МЕСТО ТАБЛИЦЫ?
   table.insertAdjacentHTML("beforeend", markup);
 }
 
@@ -61,13 +70,21 @@ const addNote = function (e) {
     author: bookAuthor,
     pages: bookPages,
     comment: bookComment,
-    date: bookDate,
+    date: Date.parse(bookDate),
+    liked: false,
   };
 
   console.log(newNote.comment);
 
-  allNotes.push(newNote);
+  const index =
+    // allNotes.findIndex((arrnote) => arrnote.date < newNote.date) - 1;
+    allNotes.findIndex((arrnote) => arrnote.date < newNote.date);
+  allNotes.splice(index, 0, newNote);
+
+  // allNotes.push(newNote);
   renderNote(newNote);
+
+  showStatistics();
   checkEmptyList();
   saveToLocalStorage();
 
@@ -89,10 +106,13 @@ const deleteNote = function (e) {
 
   saveToLocalStorage();
   checkEmptyList();
+  showStatistics();
 };
 
 form.addEventListener("submit", addNote);
 table.addEventListener("click", deleteNote);
+table.addEventListener("click", addToFavourite);
+showFav.addEventListener("click", showFavourites);
 
 function checkEmptyList() {
   if (!table.querySelector("td")) {
@@ -108,7 +128,35 @@ function saveToLocalStorage() {
   localStorage.setItem("allNotes", JSON.stringify(allNotes));
 }
 
-//Search notes by author
+// ADD TO FAVOURITES
+function addToFavourite(e) {
+  if (e.target.dataset.action === "like") {
+    const parentNode = e.target.closest(".table__row");
+
+    const id = +parentNode.id;
+    const note = allNotes.find((note) => note.id === id);
+
+    note.liked = !note.liked;
+
+    parentNode.classList.toggle("table__row-favourite");
+    saveToLocalStorage();
+  }
+}
+
+// //SEARCH NOTES ДОРАБОТАТЬ!
+// searchForm.addEventListener("click", function (e) {
+//   e.preventDefault();
+//   if (e.key !== "Enter") return;
+//   if (e.target.closest != "input") return;
+//   const option = e.target.className.includes("search__title")
+//     ? "title"
+//     : "author";
+
+//   const searchQuery = e.target.value;
+//   console.log(e.target.value);
+// });
+
+// Search notes by author
 function checkSearchResultsAuthor() {
   const searchQuery = searchAuthor.value; // Результат поиска как массив из букв
   const filteredNotes = allNotes.filter((note) => note.author === searchQuery);
@@ -126,13 +174,6 @@ searchInputAuthor.addEventListener("keydown", (event) => {
   if (event.key === "Enter") {
     event.preventDefault();
     checkSearchResultsAuthor();
-  }
-});
-
-searchInputAuthor.addEventListener("keydown", (event) => {
-  if (event.key === "Enter") {
-    event.preventDefault();
-    checkSearchResultsTitle();
   }
 });
 
@@ -160,18 +201,56 @@ searchTitle.addEventListener("keydown", (event) => {
   }
 });
 
-/*
-Сделать несколько пользователей 
+function showStatistics() {
+  let sum = [];
 
-Поиск по книгам 
-Поиск по автору 
+  if (allNotes.length === 0) return;
 
-Редактировать записи 
+  allNotes.forEach((el) => sum.push(+el.pages));
+  const pagesPerDay = Math.round(
+    sum.reduce((acc, number) => acc + number) / sum.length
+  );
 
-Фильтрация по дате / 'yesterday'
+  const markup = `   <img src="./img/statistics.png" alt="statistics">
+  <p class='h5'>${pagesPerDay} pages per day in average</p>
+  `;
 
-Prettier
+  statisticsBlock.innerHTML = "";
+  statisticsBlock.insertAdjacentHTML("beforeend", markup);
+}
 
-Сделать фавориты, фильтровать фавориты (вместо галочки)
+// SORT BY DATE (меняет исходный массив)
+// function sortByDate(arr) {
+//   return arr.sort((a, b) => b.date - a.date);
+// }
 
-*/
+function formatDate(date) {
+  const formStr = new Date(date);
+  let months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+  const year = formStr.getFullYear();
+  const month = formStr.getMonth();
+  const day = formStr.getDate();
+  return `${months[month]} ${day}, ${year}`;
+}
+
+function showFavourites() {
+  const favsArr = allNotes.filter((note) => note.liked === true);
+  if (favsArr.length === 0) return;
+
+  table.innerHTML = "";
+  table.insertAdjacentElement("afterbegin", firstRow);
+  favsArr.forEach((note) => renderNote(note));
+}

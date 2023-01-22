@@ -43,9 +43,8 @@ body {
 .gray {
   color: #bdbdbd;
 }
-.task-title--done {
-  text-decoration: line-through;
-  color: #cdcdcd;
+.table__row-favourite {
+  background-color: #f8e0d3 !important;
 }
 .task-item__buttons {
   display: flex;
@@ -161,4 +160,21 @@ tr:nth-child(even) {
 }
 .btn-primary {
   background-color: #65647c !important;
+}
+
+/* .modal {
+  position: absolute;
+  left: 50%;
+  right: 50%;
+  top: 50%;
+  bottom: 50%;
+  background-color: white;
+  z-index: 999;
+} */
+
+.statistics {
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
