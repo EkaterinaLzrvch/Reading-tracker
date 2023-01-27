@@ -50,7 +50,7 @@ function renderNote(newNote) {
               </td>
             </tr>
     `;
-  // ВСТАВЛЯТЬ ЭЛЕМЕНТ В ОПРЕДЕЛЕННОЕ МЕСТО ТАБЛИЦЫ?
+
   table.insertAdjacentHTML("beforeend", markup);
 }
 
@@ -81,7 +81,6 @@ const addNote = function (e) {
     allNotes.findIndex((arrnote) => arrnote.date < newNote.date);
   allNotes.splice(index, 0, newNote);
 
-  // allNotes.push(newNote);
   renderNote(newNote);
 
   showStatistics();
@@ -103,6 +102,7 @@ const deleteNote = function (e) {
   allNotes = allNotes.filter((task) => task.id !== id);
 
   parentNode.remove();
+  1674316953652;
 
   saveToLocalStorage();
   checkEmptyList();
@@ -143,22 +143,9 @@ function addToFavourite(e) {
   }
 }
 
-// //SEARCH NOTES ДОРАБОТАТЬ!
-// searchForm.addEventListener("click", function (e) {
-//   e.preventDefault();
-//   if (e.key !== "Enter") return;
-//   if (e.target.closest != "input") return;
-//   const option = e.target.className.includes("search__title")
-//     ? "title"
-//     : "author";
-
-//   const searchQuery = e.target.value;
-//   console.log(e.target.value);
-// });
-
-// Search notes by author
+//Search notes by author
 function checkSearchResultsAuthor() {
-  const searchQuery = searchAuthor.value; // Результат поиска как массив из букв
+  const searchQuery = searchAuthor.value.trim(); // Результат поиска как массив из букв
   const filteredNotes = allNotes.filter((note) => note.author === searchQuery);
   console.log(filteredNotes);
 

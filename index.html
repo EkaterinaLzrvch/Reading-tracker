@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="eng">
   <head>
     <meta charset="UTF-8" />
     <meta
@@ -26,11 +26,9 @@
       <div class="statistics">
       </div>
 
-       <!-- Search -->
       <form class="search">
         <p class="search__name">Author's name:</p>
         <input type="text" class="search__input form-control search__author">
-        <!-- <button class="search__btn">Поиск</button> -->
         <p class="search__name">Books's title:</p>
         <input type="text" class="search__input form-control search__title">
         <button type="submit" class="btn btn-md btn-primary show-all">
@@ -41,7 +39,6 @@
         
       </form>
 
-      <!-- List of tasks -->
       <div class="card mb-4">
         <ul id="notesList" class="list-group list-group-flush">
           <li id="emptyList" class="list-group-item empty-list">
@@ -64,23 +61,8 @@
             </tr>
       
           </table>
-
-          <!-- <li class="list-group-item d-flex justify-content-between task-item">
-            <span class="task-title">Купить молоко</span>
-            <div class="task-item__buttons">
-              <button type="button" data-action="done" class="btn-action">
-                <img src="./img/tick.svg" alt="Book" width="30" height="30" />
-              </button>
-              <button type="button" data-action="delete" class="btn-action">
-                <img src="./img/cross.svg" alt="Done" width="18" height="18" />
-              </button>
-            </div>
-          </li>
-        </ul>-->
       </div> 
 
-      <!-- //List of tasks -->
-      <!-- Form -->
       <div class="card bg-light">
         <div class="card-header">Create a new note</div>
         <div class="card-body">
@@ -118,7 +100,7 @@
                 placeholder="Leave a comment"
                 autocomplete="off"
               />
-              <input type="date" id="inputDate" class="form-control" />
+              <input type="date" id="inputDate" class="form-control" placeholder="dd.mm.yyyy"/>
             </div>
             <button type="submit" class="btn btn-submit btn-primary btn-md active">
               Add a note
